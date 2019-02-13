@@ -2,7 +2,7 @@
 #'title: "Class 5 Graphics"
 #'author: "Stephanie Curtis"
 #'date: "Friday January 25th"
-#'output:github_document
+#'output: github_document
 #'---
 #'
 #' CLASS 05 GRAPHICS AND PLOTS WITH R
