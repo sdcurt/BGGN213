@@ -9,8 +9,8 @@ output: github_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Let's read our file again! 
-New header and new intro. Here we will try to use **read.table()** and friends.
+## Let's read our file again:
+New header and new intro text. Here we will try to use **read.table()** and friends.
 ```{r}
 read.table("https://bioboot.github.io/bggn213_S18/class-material/test1.txt", header=T, sep=",")
 ```
