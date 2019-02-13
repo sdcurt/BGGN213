@@ -1,4 +1,13 @@
-#CLASS 05 GRAPHICS AND PLOTS WITH R
+#'---
+#'title: "Class 5 Graphics"
+#'author: "Stephanie Curtis"
+#'date: "Friday January 25th"
+#'output:github_document
+#'---
+#'
+#' CLASS 05 GRAPHICS AND PLOTS WITH R
+#' Stylish text **bold** and things. 
+#' 
 #Section2A: line plot
 weight<-read.table("bimm143_05_rstats/weight_chart.txt",header=TRUE)
 plot(weight,pch=1,sub="Interesting subtitle",cex=1.5,lwd=2,ylim=c(2,10),type="o",col="purple",xlab="Age (months)", ylab="Weight (kg)",main="Baby weight with age")
