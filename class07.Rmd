@@ -1,5 +1,5 @@
 ---
-title: "Class 07""
+title: "Class 07"
 author: "STEPHANIE CURTIS"
 date: "01/30/2019"
 output: github_document
@@ -19,14 +19,11 @@ Test this function
 ```{r}
 rescale(1:5)
 ```
-
+Below is an example of a command that will generate an error message: "Error in x - rng[1] : non-numeric argument to binary operator""
 ```{r}
-rescale(c(1:5,"string"))
+#rescale(c(1:5,"string"))
 ```
 We want to make this function more robust to these types of errors
-```{r}
-rescale2(c(1:5,"string"))
-```
 
 ```{r}
 is.numeric(1:5)
