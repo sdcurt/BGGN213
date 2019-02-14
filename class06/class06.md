@@ -1,7 +1,7 @@
-CLASS 6 R FUNCTIONS
+Class 06 R Functions
 ================
 STEPHANIE CURTIS
-January 25th 2019
+01/25/2019
 
 Let's read our file again:
 --------------------------

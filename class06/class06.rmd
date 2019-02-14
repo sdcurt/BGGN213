@@ -1,7 +1,7 @@
 ---
-title: "CLASS 6 R FUNCTIONS"
+title: "Class 06 R Functions"
 author: "STEPHANIE CURTIS"
-date: "January 25th 2019"
+date: "01/25/2019"
 output: github_document
 ---
 
