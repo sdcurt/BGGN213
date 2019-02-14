@@ -1,0 +1,97 @@
+---
+title: "Class 07""
+author: "STEPHANIE CURTIS"
+date: "January 30th 2019"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Functions Revisited
+**Source** our rescale() function from previous day.
+```{r}
+source("http://tinyurl.com/rescale-R")
+```
+
+Test this function
+```{r}
+rescale(1:5)
+```
+
+```{r}
+rescale(c(1:5,"string"))
+```
+We want to make this function more robust to these types of errors
+```{r}
+rescale2(c(1:5,"string"))
+```
+
+```{r}
+is.numeric(1:5)
+```
+```{r}
+is.numeric("string")
+```
+
+```{r}
+!is.numeric("string")
+```
+
+```{r}
+#Define an example x and y
+x <- c( 1, 2, NA, 3, NA)
+y <- c(NA, 3, NA, 3, 4)
+```
+
+```{r}
+is.na(x)
+is.na(y)
+```
+
+```{r}
+is.na(x)&is.na(y)
+sum(is.na(x)&is.na(y))
+```
+```{r}
+#for which element is this true... 3rd element in both vecs is NA
+which(is.na(x)&is.na(y))
+```
+Now take our working snippet and make a function
+```{r}
+#checking for NA elements in BOTH input vectors
+both_na <- function(x,y){
+  sum(is.na(x)&is.na(y))
+}
+```
+```{r}
+both_na(x,y)
+```
+```{r}
+x <- c(NA, NA, NA)
+y1 <- c( 1, NA, NA)
+y2 <- c( 1, NA, NA, NA)
+
+# What will this return?
+both_na(x, y2)
+```
+```{r}
+x <- c( 1, 2, NA, 3, NA)
+y <- c(NA, 3, NA, 3, 4)
+both_na3 <- function(x, y) {
+ if(length(x) != length(y)) {
+ stop("Input x and y should be vectors of the same length")
+ }
+
+ na.in.both <- ( is.na(x) & is.na(y) )
+ na.number <- sum(na.in.both)
+ na.which <- which(na.in.both)
+ message("Found ", na.number, " NA's at position(s):",
+ paste(na.which, collapse=", ") )
+
+ return( list(number=na.number, which=na.which) )
+}
+both_na3(x,y)
+```
+
