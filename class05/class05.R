@@ -1,12 +1,12 @@
 #'---
 #'title: "Class 5 Graphics"
-#'author: "Stephanie Curtis"
-#'date: "Friday January 25th"
+#'author: "STEPHANIE CURTIS"
+#'date: "01/25/19"
 #'output: github_document
 #'---
 #'
-#' CLASS 05 GRAPHICS AND PLOTS WITH R
-#' Stylish text **bold** and things. 
+#'CLASS 05 GRAPHICS AND PLOTS WITH R
+#'Stylish text **bold** and things. 
 #' 
 #Section2A: line plot
 weight<-read.table("bimm143_05_rstats/weight_chart.txt",header=TRUE)

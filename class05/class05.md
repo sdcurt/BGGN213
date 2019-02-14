@@ -1,7 +1,7 @@
 Class 5 Graphics
 ================
 Stephanie Curtis
-Friday January 25th
+01/25/19
 
 CLASS 05 GRAPHICS AND PLOTS WITH R Stylish text **bold** and things.
 
