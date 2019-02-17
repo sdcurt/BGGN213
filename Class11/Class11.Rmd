@@ -1,0 +1,142 @@
+---
+title: "Class 11"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## The PDB database
+
+Let's examine the PDB database composition
+```{r}
+stats<-read.csv("Data Export Summary.csv",row.names=1)
+stats
+```
+Q1(a). Determine the percentage of structures solved by X-Ray and Electron Microscopy.
+
+```{r}
+pre.by.method<-stats$Total/sum(stats$Total)*100
+names(pre.by.method)<-rownames(stats)
+#names function sets names to to the vector of numbers that you created as a variable called pre.by.method
+pre.by.method
+```
+
+Q1(b).  Also can you determine what proportion of structures are protein? 
+```{r}
+proportionprots<-round(sum(stats$Proteins/sum(stats$Total))*100,2)
+proportionprots
+```
+
+
+If no csv file is available for data you would like to import, you can still copy and paste your data here using an add-in from datapasta. Command C your desired content as normal, and then come back to Rstudio and click the Addins dropdown menu at the top of the Rstudio window and select "paste as data frame.
+
+```{r}
+
+
+data.frame(stringsAsFactors=FALSE,
+   Experimental.Method = c("X-Ray", "NMR", "Electron Microscopy", "Other",
+                           "Multi Method", "Total"),
+              Proteins = c(124770, 10988, 2057, 250, 127, 138192),
+         Nucleic.Acids = c(1993, 1273, 31, 4, 5, 3306),
+    ProteinNA.Complex = c(6451, 257, 723, 6, 2, 7439),
+                 Other = c(10, 8, 0, 13, 1, 32),
+                 Total = c(133224, 12526, 2811, 273, 135, 148969)
+)
+
+
+
+
+```
+
+Practice using Bio3d. Start by accessing online PDB file with read.pdb function.
+
+```{r}
+library(bio3d)
+ pdb<- read.pdb("1hsg")
+ pdb
+```
+There are 198 amino acids in the protein
+Nonpretein atoms are from water and from the merck1 drug.
+
+
+The devtools followed by the double colon is SIMILAR to the library function for accessing your installed packages in the sense that it is telling the computer to go get a function from a package to use.. but instead of going to the library and getting *everything* that's in devtools, it is going there and just grabbing the one function that is desired!
+```{r}
+devtools::install_bitbucket("Grantlab/bio3d-view")
+
+```
+
+```{r}
+# Load the package
+library("bio3d.view")
+# view the 3D structure
+library("rgl")
+view(pdb, "overview", col="sse")
+```
+Given example was to extract alpha carbons (representing basically the number of amino acids..)
+
+```{r}
+ca.inds <- atom.select(pdb, "calpha")
+carba<-pdb$atom[ca.inds$atom,]
+carba
+```
+
+Extract the protein only portion of this PDB structure and write it out to a new PDB file. As opposed to alpha carbon input, for which there will only be one atom (the alpha carbon) per amino acid residue, the protein input will tell you all atoms of each residue that comprises the protein.
+```{r}
+prot.inds <- atom.select(pdb, "protein")
+protein.only<-pdb$atom[prot.inds$atom,]
+protein.only
+```
+
+```{r}
+protein.only.pdb<-trim.pdb(pdb,prot.inds)
+protein.only.pdb
+```
+
+Extract the ligand and write it out to a separate file.
+```{r}
+li.inds <- atom.select(pdb, "ligand")
+ligand.only<-pdb$atom[li.inds$atom,]
+ligand.only
+```
+```{r}
+ligand.only.pdb<-trim.pdb(pdb,li.inds)
+ligand.only.pdb
+```
+
+```{r}
+write.pdb(protein.only.pdb, file="proteinonly.pdb")
+write.pdb(ligand.only.pdb, file="ligandonly.pdb")
+```
+
+```{r}
+view(ligand.only.pdb)
+```
+
+```{r}
+view(protein.only.pdb)
+```
+
+
+```{r}
+newpdb<-read.pdb("1HEL")
+ampkpdb<-read.pdb("2V8Q")
+modes<-nma(newpdb)
+ampkmodes<-nma(ampkpdb)
+plot(modes)
+plot(ampkmodes)
+```
+
+```{r}
+m7 <- mktrj(modes,
+ mode=7,
+ file="mode_7.pdb")
+view(m7, col=vec2color( rmsf(m7) ))
+
+m7 <- mktrj(ampkmodes,
+ mode=7,
+ file="ampkmode_7.pdb")
+view(m7, col=vec2color( rmsf(m7) ))
+```
+
