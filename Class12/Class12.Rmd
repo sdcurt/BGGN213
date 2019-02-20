@@ -1,0 +1,91 @@
+---
+title: "Class 12: Structural Bioinformatics Drug Discovery"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## GitHub Documents
+
+## Clean up our protein target structure
+
+First we download a target (ie protein receptor). Access structure from the main PDB database. We will pick PDB ID "1hsg"
+
+```{r}
+library(bio3d)
+pdb.code<-"1hsg"
+file.name<-get.pdb(pdb.code)
+```
+Extract the protein-only segment of this PDB entry and write out a new PDB format file.
+We will also do the same for the bound ligand.
+
+
+
+
+```{r}
+hiv<-read.pdb(file.name)
+hiv #this gives me a summary of some info including protein sequence and atoms from protein vs ligand. 
+```
+
+Protein extraction:
+```{r}
+prot<-trim.pdb(hiv,"protein")
+prot #when you look at the summary now, you see you have 0 non-protein atoms. So you've successfully extracted protein only
+```
+
+```{r}
+#write.pdb(prot,file="whatwouldyouputhere_proteinonly). #You don't want to hardwire this if you want to use it for any protein in the future! You assigned PDB identifier to the variable "pdb.code" in the very beginning. Use the following code so that the only thing you would ever have to change to use this for other proteins is that very first command!
+prot.filename<-paste(pdb.code,"_proteinonly.pdb", sep="")
+write.pdb(prot,file=prot.filename)
+#prot is from previous code chunk #the quotes with nothing in them mean don't separate the code and the _proteinonly part. We don't want any spaces!
+```
+
+
+
+
+
+Now try for the ligand:
+
+```{r}
+lig<-trim.pdb(hiv,"ligand")
+lig #when you look at the summary now, you see you have 0 protein atoms! (Just MK1 merck drug. No water or protein or anything else)
+```
+```{r}
+lig.filename<-paste(pdb.code,"_ligandonly.pdb", sep="")
+write.pdb(lig,file=lig.filename)
+#write.pdb(lig,file=paste(pdb.code,"_ligandonly.pdb",sep="")) would be a more concise version of hte same code. (nested)
+```
+
+
+
+
+...
+Then we did some Unix commands... for analyzing potential docking sites for ligand on protein
+(you downloaded the ligand.pdbqt from web)
+...
+
+
+
+##Convert our docking results for viewing in VMD
+And now we need to convert the pdbqt file into something readable by molecule visualization tools like VMD and pymol. 
+```{r}
+library(bio3d)
+res <- read.pdb("all.pdbqt", multi=TRUE)
+write.pdb(res, "results.pdb")
+res
+```
+
+
+Notice how when you calculate the root mean square distance from the ligand pdb file that distance doesn't necessarily correlate to the best actual fit. Have to take the energies of atoms into account! 
+```{r}
+# res <- read.pdb("all.pdbqt", multi=TRUE)
+ori <- read.pdb("ligand.pdbqt")
+rmsd(ori, res)
+```
+
+```{r}
+rmsd(res) 
+```
+
