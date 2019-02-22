@@ -1,0 +1,104 @@
+---
+title: "Class 13"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## GitHub Documents
+I downloaded from http://uswest.ensembl.org/Homo_sapiens/Variation/Sample?db=core;r=17:39894595-39895595;v=rs8067378;vdb=variation;vf=362656008#373531_tablePanel
+chose mexican ancestry is los angeles population (MXL)
+
+How many G|G genotypes are there in MXL snps
+```{r}
+mxl<-read.csv("373531-SampleGenotypes-Homo_sapiens_Variation_Sample_rs8067378.csv")
+head(mxl)
+```
+
+```{r}
+numpatientspergenotype<-table(mxl$Genotype..forward.strand.)
+numpatientspergenotype
+```
+
+```{r}
+percentgg<-numpatientspergenotype/nrow(mxl)*100
+percentgg
+```
+
+
+
+```{r}
+library(seqinr)
+library(gtools)
+chars<-s2c("DDDDCDEDCDDDDBBDDDCC@")
+phred <- asc( s2c("DDDDCDEDCDDDDBBDDDCC@") ) - 33
+phred
+## D D D D C D E D C D D D D B B D D D C C @
+## 35 35 35 35 34 35 36 35 34 35 35 35 35 33 33 35 35 35 34 34 31
+prob <- 10**(-phred/10)
+```
+
+## Genotype-based expression levels
+
+Took expression data
+
+```{r}
+expr<-read.table("rs8067378_ENSG00000172057.6.txt")
+head(expr)
+```
+
+```{r}
+table(expr$geno)
+```
+
+```{r}
+myggs<-which(expr$geno=="G/G")
+myggs
+```
+
+```{r}
+expr[myggs,]
+```
+
+```{r}
+expr.gg<-expr[myggs, "exp"]
+summary(expr.gg)
+```
+
+```{r}
+#now for the other genotypes:
+myaas<-which(expr$geno=="A/A")
+expr[myaas,]
+expr.aa<-expr[myaas, "exp"]
+summary(expr.aa)
+
+
+```
+
+```{r}
+myags<-which(expr$geno=="A/G")
+expr[myags,]
+expr.ag<-expr[myags, "exp"]
+summary(expr.ag)
+```
+
+
+
+Let's look at our data using box plots to visualize the values we see with the summary function.
+
+
+```{r}
+boxplot(exp ~ geno, data=expr, notch=T)
+```
+
+Now a prettier plot with ggplot tools
+```{r}
+# Boxplot with the data shown
+library(ggplot2)
+ggplot(expr, aes(geno, exp, fill=geno)) + 
+  geom_boxplot(notch=TRUE, outlier.shape = NA) + 
+  geom_jitter(shape=16, position=position_jitter(0.2), alpha=0.4)
+```
+
