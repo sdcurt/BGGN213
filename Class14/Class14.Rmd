@@ -1,0 +1,236 @@
+---
+title: "Class 14"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## GitHub Documents
+Let's read in some data from a sub-directory in my class 14 folder
+```{r}
+counts <- read.csv("data/airway_scaledcounts.csv", stringsAsFactors = FALSE)
+metadata <-  read.csv("data/airway_metadata.csv", stringsAsFactors = FALSE)
+```
+
+Let's see what these look like:
+```{r}
+head(counts)
+head(metadata)
+```
+to know how many genes we are looking at
+```{r}
+#how many genes, rows
+nrow(counts)
+#how many experiments, columns
+ncol(counts)
+```
+
+Let's check how metadata corresponds to counts.
+```{r}
+mid<-metadata$id
+colct<-colnames(counts[-1])
+identical(mid, colct) #or:
+mid == colct
+```
+
+
+If we look at our metadata, we see that the control samples are SRR1039508, SRR1039512, SRR1039516, and SRR1039520. This bit of code will first find the sample id for those labeled control. Then calculate the mean counts per gene across these samples: The drugs is called dex.
+
+
+```{r}
+#find the column names of the control expts (ids)
+control.ids<-metadata$id[metadata[,"dex"]=="control"]
+control.ids
+#use ids to extract the control counts columns
+control<-counts[,control.ids]
+rownames(control)<-counts$ensgene
+control
+```
+
+
+
+
+
+steph's dplyr versions
+```{r}
+library(dplyr)
+controldpfilt<-filter(metadata, dex =="control")
+#control.dp<-filter(metadata, dex, contains("control"))
+#control.dp
+controldpfilt
+```
+```{r}
+controldpsel<-select(counts, controldpfilt[,1])
+controldpsel
+colSums(controldpsel)/nrow(controldpsel)
+```
+
+
+
+
+
+
+
+
+
+```{r}
+
+control <- metadata[metadata[,"dex"]=="control",]
+control.mean <- rowSums( counts[ ,control$id] )/ncol(control) 
+names(control.mean) <- counts$ensgene
+```
+
+
+```{r}
+#find the column names of the TREATED expts (ids)
+treated.ids<-metadata$id[metadata[,"dex"]=="treated"]
+treated.ids
+treatedc<-counts[,treated.ids]
+rownames(treatedc)<-counts$ensgene
+```
+
+
+```{r}
+treated <- metadata[metadata[,"dex"]=="treated",]
+#rowsums for generating mean/ the number of rows:
+treated.mean <- rowSums( counts[ ,treated$id] )/ncol(treated)
+names(treated.mean) <- counts$ensgene
+```
+
+```{r}
+meancounts <- data.frame(control.mean, treated.mean)
+colSums(meancounts)
+```
+
+```{r}
+plot(meancounts)
+```
+
+```{r}
+plot(meancounts, log="xy")
+```
+
+
+```{r}
+#creating the new column log2fc to meancounts which already exists
+meancounts$log2fc <- log2(meancounts[,"treated.mean"]/meancounts[,"control.mean"])
+head(meancounts)
+```
+
+```{r}
+toy<-meancounts
+meancountzeros<-which(toy[,1] == 0 | toy[,2]==0)
+```
+
+```{r} 
+#ignore this chunk basixalluy. this INCLUDES ONLY THE ROWS THAT HAVE A ZERO IN EITHER COLUMN
+mcz<-toy[meancountzeros,]
+head(mcz)
+```
+
+```{r}
+#This is the one without the zeros to use.
+mcwoz<-toy[-meancountzeros,]
+head(mcwoz)
+```
+
+lets go into our new Mean Counts (mc) data now WithOutZeros (woz) 
+```{r}
+up.ind <- mcwoz$log2fc > 2
+down.ind <- mcwoz$log2fc < (-2)
+```
+
+Ok great, so which genes are in the upregulated group? Let's index into mcwoz to see.
+```{r}
+head(mcwoz[up.ind,])
+```
+
+##Add annotation!
+Ok so you got a list of upregulated genes (with greater than 2 fold change on the log scale). But what are these genes?
+Let's see what we can learn about the gene composition of this list!
+
+This is from ensemble
+```{r}
+anno<-read.csv("data/annotables_grch38.csv")
+dim(anno)
+head(anno)
+```
+
+Merge is a base r function. We will learn **merge()** function to add the annotation data to our **mcwoz** results
+```{r}
+mcwoz.anno<-merge(x=mcwoz,y=anno, by.x="row.names", by.y="ensgene")
+head(mcwoz.anno)
+```
+
+```{r}
+library("AnnotationDbi")
+library("org.Hs.eg.db")
+#library("org.Mm.eg.db") or ("org.Mm.gn.db") for db by gene name
+```
+```{r}
+mcwoz$symbol <- mapIds(org.Hs.eg.db,
+                     keys=row.names(mcwoz),
+                     column="SYMBOL",
+                     keytype="ENSEMBL",
+                     multiVals="first")
+```
+
+
+```{r}
+library(DESeq2)
+citation("DESeq2")
+```
+
+Build our DESeqDataSet
+```{r}
+dds <- DESeqDataSetFromMatrix(countData=counts, 
+                              colData=metadata, 
+                              design=~dex, 
+                              tidy=TRUE)
+dds
+```
+
+```{r}
+dds<-DESeq(dds)
+```
+
+```{r}
+res<-results(dds)
+res
+```
+```{r}
+summary(res)
+```
+
+```{r} 
+#p-adjust value from dds 
+plot(res$log2FoldChange, -log(res$padj))
+```
+
+
+
+
+```{r}
+#make a color vector
+#rep for a vector that repeats gray for the number of rows
+#mycolors<-rep("gray", nrow(res))
+mycolors<-rep("gray",nrow(res))
+mycolors[abs(res$log2FoldChange)>2]="red"
+plot(res$log2FoldChange, -log(res$padj), col=mycolors)
+
+```
+
+
+```{r}
+#more colors
+mycolors<-rep("gray",nrow(res))
+mycolors[abs(res$log2FoldChange)>2]="red"
+
+subset.inds<-res$padj <0.01 & abs(res$log2FoldChange)>2
+mycolors[subset.inds]<-"blue"
+
+plot(res$log2FoldChange, -log(res$padj), col=mycolors)
+```
+
