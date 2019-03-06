@@ -116,9 +116,9 @@ devtools::install_bitbucket("Grantlab/bio3d-view")
 
     ## 
     ##   
-       checking for file ‘/private/var/folders/5c/dq1fl47n48n4mg44v0r0mjl40000gn/T/RtmpFgUlcH/remotes123362e2f02f4/Grantlab-bio3d-view-dd1539876fa8/DESCRIPTION’ ...
+       checking for file ‘/private/var/folders/5c/dq1fl47n48n4mg44v0r0mjl40000gn/T/RtmpUCoQa3/remotes12d0c5ad33a0c/Grantlab-bio3d-view-dd1539876fa8/DESCRIPTION’ ...
       
-    ✔  checking for file ‘/private/var/folders/5c/dq1fl47n48n4mg44v0r0mjl40000gn/T/RtmpFgUlcH/remotes123362e2f02f4/Grantlab-bio3d-view-dd1539876fa8/DESCRIPTION’
+    ✔  checking for file ‘/private/var/folders/5c/dq1fl47n48n4mg44v0r0mjl40000gn/T/RtmpUCoQa3/remotes12d0c5ad33a0c/Grantlab-bio3d-view-dd1539876fa8/DESCRIPTION’
     ## 
       
     ─  preparing ‘bio3d.view’:
@@ -3782,8 +3782,8 @@ ampkpdb<-read.pdb("2V8Q")
 modes<-nma(newpdb)
 ```
 
-    ##  Building Hessian...     Done in 0.014 seconds.
-    ##  Diagonalizing Hessian...    Done in 0.095 seconds.
+    ##  Building Hessian...     Done in 0.015 seconds.
+    ##  Diagonalizing Hessian...    Done in 0.099 seconds.
 
 ``` r
 ampkmodes<-nma(ampkpdb)
@@ -3792,8 +3792,8 @@ ampkmodes<-nma(ampkpdb)
     ## Warning in nma.pdb(ampkpdb): Possible multi-chain structure or missing in-structure residue(s) present
     ##   Fluctuations at neighboring positions may be affected.
 
-    ##  Building Hessian...     Done in 0.134 seconds.
-    ##  Diagonalizing Hessian...    Done in 3.907 seconds.
+    ##  Building Hessian...     Done in 0.139 seconds.
+    ##  Diagonalizing Hessian...    Done in 4.024 seconds.
 
 ``` r
 plot(modes)

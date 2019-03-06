@@ -1,0 +1,155 @@
+---
+title: "Class 09"
+author: "STEPHANIE CURTIS"
+date: "02/08/2019"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Mini Project
+Input Data Wisconsin Cancer
+```{r}
+# Save your input data file to a new 'data' directory
+fna.data <- "WisconsinCancer.csv"
+wisc.df<-read.csv( fna.data )
+
+```
+
+```{r}
+head(wisc.df)
+```
+
+```{r}
+#View(wisc.df)
+```
+
+Looks like theres is a funny last col. X" Let's check how many patients there are. (one sample per patient, aka rows) and how many features there is a information for (cols)
+```{r}
+nrow(wisc.df) #number of patients
+```
+
+```{r}
+#number of featers 
+ncol(wisc.df)
+```
+remove some columns:
+```{r}
+wisc.data<-wisc.df[,3:32]
+head(wisc.data)
+```
+We removed the first two rows (patient id and diagnosis removed, and last column X). Now lets set the row names back to the patient id's though!
+```{r}
+rownames(wisc.data)<-wisc.df$id
+head(wisc.data)
+```
+how many were benign or malignant
+```{r}
+wiscdiag<-table(wisc.df$diagnosis)
+wiscdiag
+```
+
+```{r}
+wiscfeatures<-colnames(wisc.data)
+wiscfeatures
+```
+How many of my features are means? (aka how many of my column names contain the word "mean"). Using grep function.
+```{r}
+wisc.meanfeats<-grep("mean",wiscfeatures)
+wisc.meanfeats #shows you the indices of the column names that contain "mean"
+length(wisc.meanfeats) #tells me how many there are
+
+colnames(wisc.data[wisc.meanfeats])
+```
+
+```{r}
+round(apply(wisc.data, 2, mean),2) #the first 2 is an argument to the apply function. It means for the apply function to apply to COLUMNS. A 1 there would indicate rows. As it is, this apply fxn is going to give us the mean value for each column. I put the apply function inside a round function with a second 2 for 2 significant figures.
+```
+
+##PCA TIME!
+You want to scale your data or else the axes of your PCA's will be wonky. Basically you want every feature/axis to be appropriately scaled to represent the relative positions of each data point along each axis. If feature 1 ranges from 1-10 and feature 2 ranges from 600-2000 then you will be able to see differences along feature 2 on a plot easily but it will basically look like feature 1 is not different at all between all points if feature 1 and two are on the same scale even though a 3 and a 9 on this scale would be huge differences on a 1-10 scale!!
+```{r}
+#prcomp(x,scale=T)
+wisc.pr<-prcomp(wisc.data, scale=T)
+summary(wisc.pr)
+```
+
+Look at proportion of variance (can check cumulative proportion too as the proportion of variances are added) for an idea of the scree plot! The elbow. What components contributes the the bulk of your variance/aka your main slope down a cliff before you hit the rubble at the bottom. 44% and 19% and 10% are big chunks of contributions. But after that, PC5 and 6 and so on are contributing 5% or less.
+
+```{r}
+#Visualizing scree, wait just kidding we will do tha later.. this plot doesnt take proportion of variance into account maybe? look ahead for actual cscree code
+plot(wisc.pr, typ="l")
+```
+
+We need to make our own plot of our PCA results because standard plot functions will give you ridiculous/uselessness, like the first plot below!
+```{r}
+#USELESSPLOT: 
+biplot(wisc.pr)
+#better plot that we can actually use: The color (col) is set to the diagnosis column of the data frame which contains one of two possible characters, either M or B for Malignant or Benign.
+plot(wisc.pr$x[,1],wisc.pr$x[,2],col=wisc.df$diagnosis)
+#AND LOOK WOW THE CANCEROUS AND NONCANCEROUS PATIENTS SEPARATE INTO DISTINCT POSITIONS
+
+```
+
+
+#Make a scree for our pca results
+this plot will show the porportiono f var captuerd in each PC.
+Basicaly this is the second row of each of the PC infor from summary wisc.pr function above but we just calculated it by ourselves and multiplied it by 100 to get percentages
+```{r}
+variance<-wisc.pr$sdev^2
+pve<-round(variance/sum(variance)*100,2)
+pve
+```
+```{r}
+plot(pve,type="o")
+```
+
+```{r}
+barplot(pve,axes=FALSE, names.arg=paste("PC",1:length(pve)), las=2, ylab="Proportion of Var (%)")
+#names.arg puts a name below each bar-labels weach bar. The paste function pastes strings. #las for rotating the labels in the direction of the bars the sep="sdc" argument to 
+axis(2,round(pve)) #puts the axis on side #2 (ther are four sides lol)
+```
+
+##CLUSTERING IN PRINCIPAL COMPONENT SPACE :)
+For hclust ew need a distance matrix and we get this from our pca results (the prcomp fnction that we saved as wisc. pr 
+```{r}
+wisc.dist<-dist(wisc.pr$x[,1:2])
+wisc.hc<-hclust(wisc.dist, method="ward.D2")
+plot(wisc.hc) #makes big ole dendrodram
+```
+
+```{r}
+wisc.hc.cut3<-cutree(wisc.hc,k=3) #k cuts it into three groups. or we could do h=40 because we see at that h height that thats a height that would give you 3 gorups
+wisc.hc.cut3
+table(wisc.hc.cut3)
+```
+
+Plot our PCA
+```{r}
+plot(wisc.pr$x[,1],wisc.pr$x[,2],xlab="pc1",ylab="pc3",col=wisc.hc.cut3)
+```
+But now we want to see if this clustering can be compared to the diagnoses that we know! B/M
+
+```{r}
+diagnosis<-wisc.df$diagnosis=="M"
+table(wisc.hc.cut3,diagnosis)
+#since M=true its true for cancer false for no cancer. in our first cluster #1 we have 0 noncancers and 112 cancer!!!
+
+```
+```{r}
+#or even better
+table(wisc.hc.cut3,wisc.df$diagnosis)
+```
+```{r}
+new<-read.csv("new_samples.csv")
+npc <- predict(wisc.pr, newdata=new)
+npc
+```
+
+```{r}
+plot(wisc.pr$x[,1:2], col=wisc.df$diagnosis)
+points(npc[,1], npc[,2], col=c("green","blue"), pch=15,cex=3)
+```
+
