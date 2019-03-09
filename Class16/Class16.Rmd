@@ -1,0 +1,103 @@
+---
+title: "Class16"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##
+
+```{r}
+library(bio3d)
+p53seqs <- read.fasta("lecture18_sequences.fa")
+p53seqs
+```
+
+```{r}
+matches<-conserv(p53seqs$ali, method = "identity", sub.matrix = "bio3d")
+matches
+mismatch<-which(matches==0.5)
+mismatch
+
+```
+
+
+```{r}
+gaps <- gap.inspect(p53seqs)
+mismatch.pos <- mismatch[mismatch %in% gaps$f.inds]
+
+mismatch.pos
+```
+
+```{r}
+p53mutants<- paste0(p53seqs$ali["P53_wt", mismatch.pos],
+                       mismatch.pos,
+                       p53seqs$ali["P53_mutant",mismatch.pos])
+
+p53mutants
+```
+
+```{r}
+
+start9mer <- mismatch.pos - 8
+end9mer <-  mismatch.pos + 8
+
+seqs <- matrix("-", nrow=length(mismatch.pos), ncol=17)
+rownames(seqs) <- p53mutants
+
+#EXTRACT SUBSEQS
+for(i in 1:length(mismatch.pos)) {
+  seqs[i,] <- p53seqs$ali["P53_mutant",start9mer[i]:end9mer[i]]
+}
+seqs
+```
+
+
+```{r}
+seqs[seqs == "-"] <- ""
+
+## Output a FASTA file for further analysis
+write.fasta(seqs=seqs, ids=p53mutants, file="subsequences.fa")
+```
+
+#HLA binding analysis
+
+```{r}
+iedb.results<-read.csv("result.csv")
+```
+
+```{r}
+iedb.results
+```
+
+```{r}
+library(dplyr)
+iedb.res<-as.tbl(iedb.results)
+```
+```{r}
+iedb.res
+```
+
+```{r}
+colnames(iedb.res)
+```
+
+```{r}
+unique(iedb.res$allele)
+```
+
+
+```{r}
+iedb.hla02<-filter(iedb.res, allele == "HLA-A*02:01")
+iedb.hla02
+```
+
+```{r}
+iedb.hla35<-filter(iedb.res,allele =="HLA-B*35:01")
+iedb.hla35
+```
+
+
+
