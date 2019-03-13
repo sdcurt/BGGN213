@@ -163,7 +163,7 @@ plot(pca$x[,1], pca$x[,2], col=colvec, pch=16,
 
 # Hands-on section worksheet
 ```{r}
-x<- UK_foods
+x<- read.csv("UK_foods.csv")
 #I manually uploaded thisfile bc im a n00b
 ```
 
