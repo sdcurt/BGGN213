@@ -61,7 +61,7 @@ km$cluster
     ##  [1] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2
     ## [36] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
 
-Plot Clusters:
+Plot clusters & highlight the center of each cluster:
 ``` r
 plot(x,col=km$cluster)
 points(km$centers,col="blue",pch=15,cex=1.5)
@@ -178,6 +178,7 @@ plot(x,col=sgrp3)
 
 Note that the main issue of clustering (in terms of accuracy/reproducibility) in this way occurs at cluster boundaries. The structure/core of the clusters are quite reproducible and trustworthy, but that is not true for the boundaries. If you look at the input graph versus the graph of 3 clusters that I generated, some things were put into the red that I know from the input actually belong to green or black etc.
 
+
 Principal Component Analysis
 ====================
 
@@ -197,8 +198,8 @@ head(mydata)
     ## gene5  181 249  204  244 225 277 305 272 270 279
     ## gene6  460 502  491  491 493 612 594 577 618 638
 
+**prcomp()** takes data organized in an opposite orientation to standard data structures which have conditions as columns and observations as row. Transpose data using **t()** before apply PCA function.
 ``` r
-#prcomp data actaully needs your data flipped.. hence the t for transpose
 pca <- prcomp(t(mydata), scale=TRUE) 
 summary(pca)
 ```
@@ -227,8 +228,8 @@ plot(pca$x[,1], pca$x[,2])
 
 ![](Class07-08_files/figure-markdown_github/unnamed-chunk-17-1.png)
 
+Variance of data captured per principal component:
 ``` r
-## Variance captured per PC
 pca.var <- pca$sdev^2 
 pca.var.per <- round(pca.var/sum(pca.var)*100, 1)
 pca.var.per
@@ -243,11 +244,10 @@ barplot(pca.var.per, main="Scree Plot",
 
 ![](Class07-08_files/figure-markdown_github/unnamed-chunk-19-1.png)
 
+Improve the usefulness of plotting this data by making different colors for WT and KO samples. Use **substr()** on the strings that specify your samples (WT1-WT5 and KO1-KO5) to remove the number after the first two letters, and subsequently be able to evaluate all WT samples and all KO samples together.
 ``` r
-#Lets make our plot a bit more useful…
-## A vector of colors for wt and ko samples
 colvec <- as.factor( substr( colnames(mydata), 1, 2) )
-#substr cuts off your strings. ^^IN this example it is taking your column name strings of your data mydata which are wt1 wt2 wt3 wt4 wt5 ko1 ko2 ko3 ko4 and ko5 and then takes the 1st and 2nd characters of them which are wt and ko such that wt1-5 are now all wt and ko1-5 are now all ko!!! You will def want to do this
+#substr cuts off your strings--in this example it is taking your column name strings of your data mydata which are wt1 wt2 wt3 wt4 wt5 ko1 ko2 ko3 ko4 and ko5 and then takes the 1st and 2nd characters of each of them.
 plot(pca$x[,1], pca$x[,2], col=colvec, pch=16,
  xlab=paste0("PC1 (", pca.var.per[1], "%)"),
  ylab=paste0("PC2 (", pca.var.per[2], "%)")) 
@@ -255,23 +255,19 @@ plot(pca$x[,1], pca$x[,2], col=colvec, pch=16,
 
 ![](Class07-08_files/figure-markdown_github/unnamed-chunk-20-1.png)
 
+
 PCA Practice with UK Foods Sample Data
 ==========================
 
+Load data and observe its structure.
 ``` r
 x<- read.csv("UK_foods.csv")
-#I manually uploaded thisfile bc im a n00b
 ```
-
 ``` r
 dim(x)
 ```
 
     ## [1] 17  5
-
-``` r
-#to find the dimensions of x!
-```
 
 ``` r
 head(x)
@@ -286,10 +282,10 @@ head(x)
     ## 6         Sugars     156   175      147       139
 
 ``` r
-#because the row names were assigned to a column.. but we don't want them as a column with a column header we just want them to be row labels basically, not part of the table data!!
-# Note how the minus indexing works
+#since row names were assigned to a column, we need to fix this data frame. We don't want them as a column with a column header, we just want them to be row labels, not part of the table data! Subtract index (minus sign indexing) like this:
 rownames(x) <- x[,1]#This assigns the data currently in x column 1 to be the names of the rows. 
-x <- x[,-1]#Then this removes the first column! IF YOU WANT EVERYTHING EXCEPT THE FIRST COLUMN TO BE PRINTED YOU CAN USE THE MINUSSIGN. IF YOU WANTED ALL WITHOUT THE COLUMNS 1-3 you can write "-1:3" wowza
+x <- x[,-1]
+#Then this removes the first column. If you want everything except the first column to be printed you would use the minus sign. If you wanted all columns except columns 1-3, you would write "-1:3"
 head(x)
 ```
 
@@ -302,9 +298,20 @@ head(x)
     ## Sugars             156   175      147       139
 
 ``` r
-#Moral of the story: A better way to fix this would be to read this file in correctly. read.csv("UK_foods.csv",row.names=1) which tells you that the first column is actually the row names. THe code in this chunk is dangerous bc it is coding to delete columns from your dataset! Yikes!
+#A better way to fix this would be to read this file in correctly. read.csv("UK_foods.csv",row.names=1) which tells you that the first column is actually the row names. THe code in this chunk is dangerous bc it is coding to delete columns from your dataset! Yikes!
 ```
 
 ``` r
-x <- read.csv("UK_foods.csv")
+x <- read.csv("UK_foods.csv",row.names=1)
+```
+``` r
+ukf_pca <- prcomp(t(x), scale=TRUE) 
+summary(ukf_pca)
+```
+``` r
+ukf_pca <- prcomp(t(x), scale=TRUE) 
+summary(ukf_pca)
+```
+``` r
+plot(pca$x)
 ```
