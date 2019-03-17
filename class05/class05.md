@@ -6,6 +6,9 @@ Stephanie Curtis
 Graphics and Plotting in base R
 Styling text with **bold** and *italics*.
 
+
+
+
 Create line plot. Specify plot characteristics including line properties, point characters, axis properties, and colors:
 ``` r
 #Sample provided with weight data:
@@ -14,6 +17,10 @@ plot(weight,pch=1,sub="Interesting subtitle",cex=1.5,lwd=2,ylim=c(2,10),type="o"
 ```
 
 ![](class05_files/figure-markdown_github/unnamed-chunk-1-1.png)
+
+
+
+
 
 Create bar plot. Specify plot margins.
 ``` r
@@ -25,6 +32,9 @@ barplot(feat$Count,names.arg=feat$Feature,las=1,horiz=T,xlab="Counts",main="Coun
 
 ![](class05_files/figure-markdown_github/unnamed-chunk-1-2.png)
 
+
+
+
 Create plot without hard-coding color parameters. Set number of colors to number of observations present in sample data:
 ``` r
 mfc<-read.table("bimm143_05_rstats/male_female_counts.txt",header=T,sep="\t")
@@ -33,6 +43,10 @@ barplot(mfc$Count,names.arg=mfc$Sample,las=2,col=rainbow(nrow(mfc)))
 ```
 
 ![](class05_files/figure-markdown_github/unnamed-chunk-1-3.png)
+
+
+
+
 
 Use **table()** function to summarize data:
 ``` r
@@ -46,6 +60,8 @@ table(genes$State)
     ##       down unchanging         up 
     ##         72       4997        127
 
+
+
 Look at your data color-coded by direction of gene expression change:
 ``` r
 #color will return every observation (gene) in one color from three options. You have defined three options according to the number of qualities that are possible for each observation in the expression change category (unchanging vs increasing vs decreasing)
@@ -57,7 +73,10 @@ plot(genes$Condition1,genes$Condition2,col=genes$State,xlab="Expression Conditio
 
 ![](class05_files/figure-markdown_github/unnamed-chunk-1-4.png)
 
-If you did not set color parameters based on a variable applied to each observation, the default color scheme would retrun a plot like this:
+
+
+
+If you did not set color parameters based on a variable applied to each observation, the default color scheme would return a plot like this:
 ``` r
 #return to default palette setting:
 palette(ogpalette)
