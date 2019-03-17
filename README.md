@@ -5,7 +5,7 @@ This is a collection of my work from [BGGN213 at UCSD](https://bioboot.github.io
 
 - [Data Exploration and Visualization in R](https://github.com/sdcurt/BGGN213/blob/master/class05/class05.md)
 - [R Functions for Data Manipulation](https://github.com/sdcurt/BGGN213/blob/master/class06/class06.md)
-- [Create an R function for Protein Structure Analysis](https://github.com/sdcurt/BGGN213/blob/master/class06/Class06_CodeImprovementHW.md)
+  - [Write an R function for Protein Structure Analysis](https://github.com/sdcurt/BGGN213/blob/master/class06/Class06_CodeImprovementHW.md)
 - [Data Clustering Methods](https://github.com/sdcurt/BGGN213/blob/master/Class08/Class07-08.md)
 - [Mini-Project: Unsupervised Learning Analysis of Human Breast Cancer Cells](https://github.com/sdcurt/BGGN213/blob/master/Class09/Class09.md)
 - [Structural Bioinformatics: PDB and Bio3d in R](https://github.com/sdcurt/BGGN213/blob/master/Class11/Class11.md)
