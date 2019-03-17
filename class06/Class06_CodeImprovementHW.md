@@ -1,12 +1,13 @@
-Q6: Class 06 Code Improvement Homework
+Code-Writing
 ================
 STEPHANIE CURTIS
 01/25/2019
 
-Removing Calculation Duplication when Coding
---------------------------------------------
+###Create a function to improve existing code
+#####Removing Calculation Duplication when Coding
 
-Rather than reading into PDB three separate times, making three separate variables, and writing the same three lines of code for each, I have created **a single function** to perform the lookup and analysis, named pdbplotfxn. This function allows the comparison of protein structure under drug-treated and untreated condition (for example) by visualizing the amino acid sequence plotted against the B-factor under both conditions.
+
+Rather than reading into PDB three separate times, making three separate variables, and writing the same three lines of code for each, I have created a single function, **pdbplotfxn()**, to perform the lookup and analysis. This function allows the comparison of protein structure under drug-treated and untreated condition (for example) by visualizing the amino acid sequence plotted against the B-factor under both conditions.
 
 ``` r
 #load package
