@@ -3,7 +3,6 @@
 
 This is a collection of my work from [BGGN213 at UCSD](https://bioboot.github.io/bggn213_W19/)
 
-##Contents
 - [Data Exploration and Visualization in R](https://github.com/sdcurt/BGGN213/blob/master/class05/class05.md)
 - [R Functions for Data Manipulation](https://github.com/sdcurt/BGGN213/blob/master/class06/class06.md)
 - [Create an R function for Protein Structure Analysis](https://github.com/sdcurt/BGGN213/blob/master/class06/Class06_CodeImprovementHW.md)
@@ -13,5 +12,5 @@ This is a collection of my work from [BGGN213 at UCSD](https://bioboot.github.io
 - [Structural Bioinformatics: Ligand Binding and Drug Discovery](https://github.com/sdcurt/BGGN213/blob/master/Class12/Class12.md)
 - [Genome Informatics and High Throughput Sequencing](https://github.com/sdcurt/BGGN213/blob/master/Class13/Class13.md)
 - [Transcriptomics](https://github.com/sdcurt/BGGN213/blob/master/Class14/Class14.md)
-- [Pathway Analysis of RNAseq Results: Gene List Annotations and Biological Networks](https://github.com/sdcurt/BGGN213/blob/master/Class15/Class15.md)
+- [Annotation and Analysis of RNAseq Results: Pathways & Biological Networks](https://github.com/sdcurt/BGGN213/blob/master/Class15/Class15.md)
 - [Cancer Genomics: Designing Personalized Tumor Vaccines](https://github.com/sdcurt/BGGN213/blob/master/Class16/Class16.md)
