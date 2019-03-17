@@ -1,17 +1,13 @@
-Class08
+Clustering Analysis in R
 ================
 STEPHANIE CURTIS
 2/6/2019
 
-R Markdown
+Explore how and when to perform different clustering methods
 ----------
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
+Generate example data to cluster and plot it:
 ``` r
-# Generate some example data for clustering
 tmp <- c(rnorm(30,-3), rnorm(30,3))
 x <- cbind(x=tmp, y=rev(tmp))
 plot(x)
@@ -19,7 +15,13 @@ plot(x)
 
 ![](Class07-08_files/figure-markdown_github/unnamed-chunk-1-1.png)
 
+
+
+K-means Clustering:
+-----------------------
+Use kmeans() function:
 ``` r
+#specify the number of clusters:
 km<-kmeans(x,centers=2,nstart=20)
 km
 ```
@@ -45,13 +47,13 @@ km
     ## [5] "tot.withinss" "betweenss"    "size"         "iter"        
     ## [9] "ifault"
 
+Verify cluster size:
 ``` r
-#size of clusters
 km$size
 ```
 
     ## [1] 30 30
-
+Determine into which cluster each element was assigned:
 ``` r
 km$cluster
 ```
@@ -59,6 +61,7 @@ km$cluster
     ##  [1] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2
     ## [36] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
 
+Plot Clusters:
 ``` r
 plot(x,col=km$cluster)
 points(km$centers,col="blue",pch=15,cex=1.5)
@@ -66,18 +69,14 @@ points(km$centers,col="blue",pch=15,cex=1.5)
 
 ![](Class07-08_files/figure-markdown_github/unnamed-chunk-5-1.png)
 
-HIERARCHICAL CLUSTERING
------------------------
 
+
+Hierarchical Clustering
+-----------------------
+First we need to calculate point (dis)similarity as Euclidean distance between observations. Then we can use the hclust() function to generate a hierarchical clustering model.
 ``` r
-#Hierarchical clustering in R
-# First we need to calculate point (dis)similarity
-# as the Euclidean distance between observations
 dist_matrix <- dist(x)
-# The hclust() function returns a hierarchical
-# clustering model
 hc <- hclust(d = dist_matrix)
-# the print
 hc
 ```
 
@@ -96,16 +95,17 @@ abline(h=6,col="red")
 
 ![](Class07-08_files/figure-markdown_github/unnamed-chunk-7-1.png)
 
+Clustering tree can be cut by height (h) or by specified number of clusters (k) using **cutree()** function. What information you already know will determine whether you want to uses h or k.  
 ``` r
-#cut your tree of variable hc by h height OR BY K=Number if you know how many groups you want but don't know what height to cut at to get the two groups. We picked 6 because we looked at the plot and knew it was at that height..
+#if you know how many groups you want but don't know what height to cut at to get the two groups- In this case I picked height 6 because looking at the plot revealed that this is the right height... 
 grp2<-cutree(hc,h=6)
 ```
-
 ``` r
 plot(x,col=grp2)
 ```
 
 ![](Class07-08_files/figure-markdown_github/unnamed-chunk-8-1.png)
+
 
 ``` r
 plot(hc)
@@ -121,41 +121,37 @@ plot(x,col=groupsies)
 
 ![](Class07-08_files/figure-markdown_github/unnamed-chunk-10-1.png)
 
+
 Different linkage methods for clustering
 ----------------------------------------
 
-Default is Complete which does pairwase comparisons for each point and picks the farthest ones and goes from there branching out to the enxt closest one to include in the cluster. Other options include "Single" which starts with the two closest. "Average" " which somehow uses the average of the distance between two points to start or something and finally "centroid" which finds the center of each (of the two?) clusters and goes from there.
+Default is "Complete" which does pairwase comparisons for each point and picks the farthest ones and goes from there branching out to the next closest one to include in the cluster. Other options include "Single" which starts with the two closest, "Average" " which uses the average of the distance between two points to start, and "Centroid" which finds the centers and goes from there.
 
+Try hc plotting whith different methods, ie: (hc.single<-hclust(x,single))
+
+Generate example data and plot it without clustering:
 ``` r
-#try hc plotting whith different methods (hc.single<-hclust(x,single)) or something
-```
-
-Stephanie gives it a go all by herself:
----------------------------------------
-
-``` r
-# Step 1. Generate some example data for clustering
 x <- rbind(
  matrix(rnorm(100, mean=0, sd = 0.3), ncol = 2), # c1
  matrix(rnorm(100, mean = 1, sd = 0.3), ncol = 2), # c2
  matrix(c(rnorm(50, mean = 1, sd = 0.3), # c3
  rnorm(50, mean = 0, sd = 0.3)), ncol = 2))
 colnames(x) <- c("x", "y")
-# Step 2. Plot the data without clustering
 plot(x)
 ```
 
 ![](Class07-08_files/figure-markdown_github/unnamed-chunk-12-1.png)
 
+
+Generate color vector for known clusters (so we can compare to results of hclust):
 ``` r
-# Step 3. Generate colors for known clusters
-# (just so we can compare to hclust results)
 col <- as.factor( rep(c("c1","c2","c3"), each=50) )
 plot(x, col=col)
 ```
 
 ![](Class07-08_files/figure-markdown_github/unnamed-chunk-12-2.png)
 
+Calculate distance between points:
 ``` r
 sdist<-dist(x) #calc dist between points
 sdchc<-hclust(sdist)
@@ -165,6 +161,7 @@ plot(sdchc)
 
 ![](Class07-08_files/figure-markdown_github/unnamed-chunk-13-1.png)
 
+Cut tree:
 ``` r
 sgrp2<-cutree(sdchc,k=2)
 plot(x,col=sgrp2)
@@ -177,11 +174,14 @@ sgrp3<-cutree(sdchc,k=3)
 plot(x,col=sgrp3)
 ```
 
-![](Class07-08_files/figure-markdown_github/unnamed-chunk-13-3.png) Boundaries are the issue. The structure/core of the clustrers are pretty reproducible and trustworthy but the boundaries are not so. IF you look at the in;put graph versus the graph of 3 clustrers that I generated some things were put into the red that I know from the input actually belong to green or black etc.
+![](Class07-08_files/figure-markdown_github/unnamed-chunk-13-3.png) 
 
-NOW WE ARE DOING PCA
+Note that the main issue of clustering (in terms of accuracy/reproducibility) in this way occurs at cluster boundaries. The structure/core of the clusters are quite reproducible and trustworthy, but that is not true for the boundaries. If you look at the input graph versus the graph of 3 clusters that I generated, some things were put into the red that I know from the input actually belong to green or black etc.
+
+Principal Component Analysis
 ====================
 
+Load expression data for PCA:
 ``` r
 ## You can also download this file from the class website!
 mydata <- read.csv("https://tinyurl.com/expression-CSV",
@@ -213,8 +213,8 @@ summary(pca)
     ## Proportion of Variance 0.00642 0.00385 0.00364 0.000e+00
     ## Cumulative Proportion  0.99251 0.99636 1.00000 1.000e+00
 
-Make our first pca plot
 
+First PCA plot:
 ``` r
 plot(pca$x)
 ```
@@ -255,7 +255,7 @@ plot(pca$x[,1], pca$x[,2], col=colvec, pch=16,
 
 ![](Class07-08_files/figure-markdown_github/unnamed-chunk-20-1.png)
 
-Hands-on section worksheet
+PCA Practice with UK Foods Sample Data
 ==========================
 
 ``` r
